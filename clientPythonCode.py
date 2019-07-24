@@ -38,6 +38,7 @@ def commands():
         if rsp == QtWidgets.QDialog.Accepted:
             address = Connector_ui.ip_address_lineEdit.text()
             port = Connector_ui.port_lineEdit.text()
+            numm = Connector_ui.num_conns_lineEdit.text()
               
         else:
             ui.console_textEdit.append("you have quit the connector dialog")
