@@ -73,7 +73,7 @@ def start_connections(address, port, num_conns):
         #create a socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #set the socket to non blocking
-        sock.setblocking(False). 
+        sock.setblocking(False)
         #if there is an error then connect_ex() returns an error indicator, errno.EINPROGRESS, instead of raising an exception while the connection is in progress. 
         #Once the connection is completed, the socket is ready for reading and writing and is returned as such by select().
         #connect the socket to the server address
