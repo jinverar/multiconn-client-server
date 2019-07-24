@@ -36,15 +36,54 @@ def commands():
         rsp = Dialog.exec_()
         
         if rsp == QtWidgets.QDialog.Accepted:
-            ui.address = Connector_ui.ip_address_lineEdit.text()
-            ui.port = Connector_ui.port_lineEdit.text()
+            address = Connector_ui.ip_address_lineEdit.text()
+            port = Connector_ui.port_lineEdit.text()
               
         else:
             ui.console_textEdit.append("you have quit the connector dialog")
 
 
 
+#num_conns is read from the command-line, which is the number of connections to create to the server. Just like the server, each socket is set to non-blocking mode.
+def start_connections(address, port, num_conns):
+    server_addr = (ui.address, ui.port)
+    for i in range(0, num_conns):
+        connid = i + 1
+        print('starting connection', connid, 'to', server_addr)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setblocking(False)
+        #connect_ex() is used instead of connect() since connect() would immediately raise a BlockingIOError exception. 
+        #connect_ex() initially returns an error indicator, errno.EINPROGRESS, instead of raising an exception while the connection is in progress. 
+        #Once the connection is completed, the socket is ready for reading and writing and is returned as such by select().
+        sock.connect_ex(server_addr)
+        events = selectors.EVENT_READ | selectors.EVENT_WRITE
+        #After the socket is setup, the data we want stored with the socket is created using the class types.SimpleNamespace. 
+        #The messages the client will send to the server are copied using list(messages) since each connection will call socket.send() and modify the list. 
+        #Everything needed to keep track of what the client needs to send, has sent and received, and the total number of bytes in the messages is stored in the object data.
+        data = types.SimpleNamespace(connid=connid,msg_total=sum(len(m) for m in messages),recv_total=0,messages=list(messages),outb=b'')
+        sel.register(sock, events, data=data)
 
+def service_connection(key, mask):
+    sock = key.fileobj
+    data = key.data
+    if mask & selectors.EVENT_READ:
+        recv_data = sock.recv(1024)  # Should be ready to read
+        if recv_data:
+            print('received', repr(recv_data), 'from connection', data.connid)
+            #It keeps track of the number of bytes it’s received from the server so it can close its side of the connection. 
+            #When the server detects this, it closes its side of the connection too.
+            data.recv_total += len(recv_data)
+        #if not recv_data or data.recv_total == data.msg_total:
+        #    print('closing connection', data.connid)
+        #    sel.unregister(sock)
+        #    sock.close()
+    if mask & selectors.EVENT_WRITE:
+        if not data.outb and data.messages:
+            data.outb = data.messages.pop(0)
+        if data.outb:
+            print('sending', repr(data.outb), 'to connection', data.connid)
+            sent = sock.send(data.outb)  # Should be ready to write
+            data.outb = data.outb[sent:]
 
 
 
