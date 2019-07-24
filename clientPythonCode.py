@@ -39,9 +39,14 @@ def commands():
         ui.console_textEdit.append("[+] Command options: ")
         ui.console_textEdit.append("[+] connect ====== > connect to the experimantal server")
         ui.console_textEdit.append("[+] check ====== > check for connected clients")
+        ui.console_textEdit.append("[+] close ====== > disconnect from the server")
 
     if 'send' in command:
         messages = [b'Message 1 from client.', b'Message 2 from client.']
+
+    if 'close' in command:
+        sel.close()
+        ui.console_textEdit.append(" [**] closing connection to %s" % sel.register)
 
     if 'check' in command:
         #--------------------------------------------------------------------------------------------------
@@ -85,6 +90,7 @@ def start_connections(address, port, num_conns):
         #increase the connid by 1 each time
         connid = i + 1
         print('starting connection', connid, 'to', server_addr)
+        ui.console_textEdit.append(" [**] connected")
         #create a socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #set the socket to non blocking
