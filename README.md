@@ -17,7 +17,15 @@ pyuic5 -x -o  clientApp.py  muliconn-client-gui.ui
 ```
 the clientPythonCode.py is my main working file that holds the python code for the program. This file imports the mainwindow code.
 
+
 Program Usage:
+
+first start the server using the following command
+
+```python
+python .\multiconn-server.py
+```
+then start the client using the following command
 
 ```python
 python clientPythonCode.py
