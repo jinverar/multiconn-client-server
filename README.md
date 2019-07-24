@@ -23,4 +23,7 @@ Program Usage:
 python clientPythonCode.py
 ```
 
+Once the main windows is displayed then type "Help" for the help windows or type "connect" for the connection dialog.
+
+
 Thank you and anyone can contribute to this project. 
