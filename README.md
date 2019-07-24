@@ -33,5 +33,7 @@ python clientPythonCode.py
 
 Once the main windows is displayed then type "Help" for the help windows or type "connect" for the connection dialog.
 
+the server is set to automatically start on port '12345" and the user will have to increase the num_conns each time they connect.
+
 
 Thank you and anyone can contribute to this project. 
