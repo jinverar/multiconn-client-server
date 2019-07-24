@@ -6,8 +6,15 @@ from PyQt5.QtGui import QPixmap, QIcon
 
 from ConnectorDialog import Connector_Dialog
 
+#python selectors
+# ref for selectors https://docs.python.org/3/library/selectors.html
+#This module allows high-level and efficient I/O multiplexing, built upon the select module primitives.
 import selectors
 import socket
+
+#python TYPES This module defines utility functions to assist in dynamic creation of new types.
+#It also defines names for some object types that are used by the standard Python interpreter, but not exposed as builtins like int or str are.
+#Finally, it provides some additional type-related utility classes and functions that are not fundamental enough to be builtins.
 import types
 
 sel = selectors.DefaultSelector()
@@ -27,6 +34,9 @@ def commands():
         ui.console_textEdit.setText("[**] below are the main window help commands ")
         ui.console_textEdit.append("[+] Command options: ")
         ui.console_textEdit.append("[+] connect ====== > connect to the experimantal server")
+
+    if 'send' in command:
+        messages = [b'Message 1 from client.', b'Message 2 from client.']
 
 
 
@@ -49,24 +59,41 @@ def commands():
         else:
             ui.console_textEdit.append("you have quit the connector dialog")
 
-messages = [b'Message 1 from client.', b'Message 2 from client.']
 
+messages = [b'Message 1 from client.', b'Message 2 from client.']
 #num_conns is read from the command-line, which is the number of connections to create to the server. Just like the server, each socket is set to non-blocking mode.
 def start_connections(address, port, num_conns):
+    #add the address and port to the server_addr so we can use this to connect
     server_addr = (address, int(port))
+    #create a for loop to increase the number of connections each time a client connects. 
     for i in range(0, num_conns):
+        #increase the connid by 1 each time
         connid = i + 1
         print('starting connection', connid, 'to', server_addr)
+        #create a socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.setblocking(False)
-        #connect_ex() is used instead of connect() since connect() would immediately raise a BlockingIOError exception. 
-        #connect_ex() initially returns an error indicator, errno.EINPROGRESS, instead of raising an exception while the connection is in progress. 
+        #set the socket to non blocking
+        sock.setblocking(False). 
+        #if there is an error then connect_ex() returns an error indicator, errno.EINPROGRESS, instead of raising an exception while the connection is in progress. 
         #Once the connection is completed, the socket is ready for reading and writing and is returned as such by select().
+        #connect the socket to the server address
         sock.connect_ex(server_addr)
+        #he following, events is a bitwise mask indicating which I/O events should be waited for on a given file object
+        #A mask defines which bits you want to keep, and which bits you want to clear.
+        #Masking is the act of applying a mask to a value. This is accomplished by doing, 
+        #Bitwise ANDing in order to extract a subset of the bits in the value
+        #Bitwise ORing in order to set a subset of the bits in the value
+        #Bitwise XORing in order to toggle a subset of the bits in the value
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         #After the socket is setup, the data we want stored with the socket is created using the class types.SimpleNamespace. 
         #The messages the client will send to the server are copied using list(messages) since each connection will call socket.send() and modify the list. 
         #Everything needed to keep track of what the client needs to send, has sent and received, and the total number of bytes in the messages is stored in the object data.
+
+        #class types.SimpleNamespace, A simple object subclass that provides attribute access to its namespace, as well as a meaningful repr.Unlike object, 
+        #with SimpleNamespace you can add and remove attributes. If a SimpleNamespace object is initialized with keyword arguments, 
+        #those are directly added to the underlying namespace.
+
+        # put type simple namespace into data and check the connid, if the connid is true then send the message if receive total is 0 check the list.
         data = types.SimpleNamespace(connid=connid,msg_total=sum(len(m) for m in messages),recv_total=0,messages=list(messages),outb=b'')
         sel.register(sock, events, data=data)
 
@@ -80,10 +107,10 @@ def service_connection(key, mask):
             #It keeps track of the number of bytes it’s received from the server so it can close its side of the connection. 
             #When the server detects this, it closes its side of the connection too.
             data.recv_total += len(recv_data)
-        #if not recv_data or data.recv_total == data.msg_total:
-        #    print('closing connection', data.connid)
-        #    sel.unregister(sock)
-        #    sock.close()
+        if not recv_data or data.recv_total == data.msg_total:
+            print('closing connection', data.connid)
+            sel.unregister(sock)
+            sock.close()
     if mask & selectors.EVENT_WRITE:
         if not data.outb and data.messages:
             data.outb = data.messages.pop(0)
