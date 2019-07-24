@@ -23,7 +23,7 @@ Program Usage:
 first start the server using the following command
 
 ```python
-python .\multiconn-server.py
+python multiconn-server.py
 ```
 then start the client using the following command
 
