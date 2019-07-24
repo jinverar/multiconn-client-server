@@ -22,6 +22,8 @@ import types
 ##This should be the default choice for most users.
 #put the DefaultSelector into a variable called "sel"
 sel = selectors.DefaultSelector()
+connid = []
+server_addr = []
 
 #below is my commands function. The user will enter commands and receive responses back. 
 def commands():
@@ -46,12 +48,13 @@ def commands():
 
     if 'close' in command:
         sel.close()
-        ui.console_textEdit.append(" [**] closing connection to %s" % sel.register)
+        ui.console_textEdit.append(" [**] the connection id %s to %s is closed" % (connid, server_addr))
 
     if 'check' in command:
         #--------------------------------------------------------------------------------------------------
         #clients = {'sip.voidptr object at 0x00000122031B2AD0' : 'PyQt5.QtNetwork.QTcpSocket object at 0x00000122031C53A8', 'sip.voidptr object at 0x00000122031B2B48': 'PyQt5.QtNetwork.QTcpSocket object at 0x00000122033D44C8'}
         #-----------------------------------------------------------------------------------------------------
+        #ui.console_textEdit.append(" [**] the connection ids are %s" % connid)
         ui.console_textEdit.append(" [**] the selector objects are %s" % sel)
         ui.console_textEdit.append(" [**] the keys are %s" % sel.get_key)
         ui.console_textEdit.append(" [**] the map of clients are %s" % sel.get_map)
@@ -90,7 +93,7 @@ def start_connections(address, port, num_conns):
         #increase the connid by 1 each time
         connid = i + 1
         print('starting connection', connid, 'to', server_addr)
-        ui.console_textEdit.append(" [**] connected")
+        ui.console_textEdit.append(" [**] connected and the connection id is %s to %s" % (connid, server_addr))
         #create a socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #set the socket to non blocking
