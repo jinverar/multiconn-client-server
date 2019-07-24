@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QPixmap, QIcon
 
 from ConnectorDialog import Connector_Dialog
+import platform
 
 #python selectors
 # ref for selectors https://docs.python.org/3/library/selectors.html
@@ -42,9 +43,10 @@ def commands():
         ui.console_textEdit.append("[+] connect ====== > connect to the experimantal server")
         ui.console_textEdit.append("[+] check ====== > check for connected clients")
         ui.console_textEdit.append("[+] close ====== > disconnect from the server")
+        ui.console_textEdit.append("[+] getenv ====== > send the environment back to the server, //not working")
 
     if 'send' in command:
-        messages = [b'Message 1 from client.', b'Message 2 from client.']
+        sock.send( "[+] Platform Is " + platform.platform()) 
 
     if 'close' in command:
         sel.close()
