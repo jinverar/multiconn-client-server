@@ -6,7 +6,11 @@ from PyQt5.QtGui import QPixmap, QIcon
 
 from ConnectorDialog import Connector_Dialog
 
+import selectors
+import socket
+import types
 
+sel = selectors.DefaultSelector()
 
 #below is my commands function. The user will enter commands and receive responses back. 
 def commands():
@@ -45,11 +49,11 @@ def commands():
         else:
             ui.console_textEdit.append("you have quit the connector dialog")
 
-
+messages = [b'Message 1 from client.', b'Message 2 from client.']
 
 #num_conns is read from the command-line, which is the number of connections to create to the server. Just like the server, each socket is set to non-blocking mode.
 def start_connections(address, port, num_conns):
-    server_addr = (address, port)
+    server_addr = (address, int(port))
     for i in range(0, num_conns):
         connid = i + 1
         print('starting connection', connid, 'to', server_addr)
