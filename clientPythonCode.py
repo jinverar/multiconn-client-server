@@ -40,7 +40,7 @@ def commands():
             ui.port = Connector_ui.port_lineEdit.text()
               
         else:
-            ui.events_textEdit.append("you have quit the handler dialog")
+            ui.console_textEdit.append("you have quit the connector dialog")
 
 
 
