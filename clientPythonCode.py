@@ -38,7 +38,9 @@ def commands():
         if rsp == QtWidgets.QDialog.Accepted:
             address = Connector_ui.ip_address_lineEdit.text()
             port = Connector_ui.port_lineEdit.text()
-            numm = Connector_ui.num_conns_lineEdit.text()
+            num_conns = Connector_ui.num_conns_lineEdit.text()
+            num_conns = int(num_conns)
+            start_connections(address, port, num_conns)
               
         else:
             ui.console_textEdit.append("you have quit the connector dialog")
@@ -47,7 +49,7 @@ def commands():
 
 #num_conns is read from the command-line, which is the number of connections to create to the server. Just like the server, each socket is set to non-blocking mode.
 def start_connections(address, port, num_conns):
-    server_addr = (ui.address, ui.port)
+    server_addr = (address, port)
     for i in range(0, num_conns):
         connid = i + 1
         print('starting connection', connid, 'to', server_addr)
