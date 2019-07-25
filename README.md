@@ -23,9 +23,9 @@ Program Usage:
 first start the server using the following command
 
 ```python
-python multiconn-server.py
+python multiconn-server.py <ip address> <port>
 ```
-then start the client using the following command
+then start the client use the following command and the client has a Gui that has a console located at the bottom of the main window
 
 ```python
 python clientPythonCode.py
