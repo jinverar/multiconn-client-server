@@ -28,7 +28,7 @@ python multiconn-server.py <ip address> <port>
 then start the client use the following command and the client has a Gui that has a console located at the bottom of the main window
 
 ```python
-python clientPythonCode.py
+python client-gui.py
 ```
 
 Once the main windows is displayed then type "Help" for the help windows or type "connect" for the connection dialog.
