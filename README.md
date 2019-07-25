@@ -10,12 +10,9 @@ there are two main files to the GUI.
 2. clientApp.py
 3. multiconn-client-gui.ui
 
-the ClientApp.py was created with the following command from the .ui file 
+the ClientApp.py was created with Qtdesginer and converted to python code. Then the client-Gui.py file was created and clientApp was imported into client-gui.py. 
 
-```bash
-pyuic5 -x -o  clientApp.py  muliconn-client-gui.ui
-```
-the clientPythonCode.py is my main working file that holds the python code for the program. This file imports the mainwindow code.
+the client-Gui.py is my main working file that holds the python code for the program. This file imports the mainwindow code from clientApp.py.
 
 
 Program Usage:
