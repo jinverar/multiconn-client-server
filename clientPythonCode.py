@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QPixmap, QIcon
 
 from ConnectorDialog import Connector_Dialog
+import platform
 
 #python selectors
 # ref for selectors https://docs.python.org/3/library/selectors.html
@@ -22,6 +23,8 @@ import types
 ##This should be the default choice for most users.
 #put the DefaultSelector into a variable called "sel"
 sel = selectors.DefaultSelector()
+connid = []
+server_addr = []
 
 #below is my commands function. The user will enter commands and receive responses back. 
 def commands():
@@ -40,18 +43,20 @@ def commands():
         ui.console_textEdit.append("[+] connect ====== > connect to the experimantal server")
         ui.console_textEdit.append("[+] check ====== > check for connected clients")
         ui.console_textEdit.append("[+] close ====== > disconnect from the server")
+        ui.console_textEdit.append("[+] getenv ====== > send the environment back to the server, //not working")
 
-    if 'send' in command:
-        messages = [b'Message 1 from client.', b'Message 2 from client.']
+    if 'getenv' in command:
+        sock.send( "[+] Platform Is " + platform.platform()) 
 
     if 'close' in command:
         sel.close()
-        ui.console_textEdit.append(" [**] closing connection to %s" % sel.register)
+        ui.console_textEdit.append(" [**] the connection id %s to %s is closed" % (connid, server_addr))
 
     if 'check' in command:
         #--------------------------------------------------------------------------------------------------
         #clients = {'sip.voidptr object at 0x00000122031B2AD0' : 'PyQt5.QtNetwork.QTcpSocket object at 0x00000122031C53A8', 'sip.voidptr object at 0x00000122031B2B48': 'PyQt5.QtNetwork.QTcpSocket object at 0x00000122033D44C8'}
         #-----------------------------------------------------------------------------------------------------
+        #ui.console_textEdit.append(" [**] the connection ids are %s" % connid)
         ui.console_textEdit.append(" [**] the selector objects are %s" % sel)
         ui.console_textEdit.append(" [**] the keys are %s" % sel.get_key)
         ui.console_textEdit.append(" [**] the map of clients are %s" % sel.get_map)
@@ -75,6 +80,19 @@ def commands():
             num_conns = Connector_ui.num_conns_lineEdit.text()
             num_conns = int(num_conns)
             start_connections(address, port, num_conns)
+            try:
+                while True:
+                    events = sel.select(timeout=1)
+                    if events:
+                        for key, mask in events:
+                            service_connection(key, mask)
+                    # Check for a socket being monitored to continue.
+                    if not sel.get_map():
+                        break
+            except KeyboardInterrupt:
+                print("caught keyboard interrupt, exiting")
+            finally:
+                sel.close()
               
         else:
             ui.console_textEdit.append("you have quit the connector dialog")
@@ -90,7 +108,7 @@ def start_connections(address, port, num_conns):
         #increase the connid by 1 each time
         connid = i + 1
         print('starting connection', connid, 'to', server_addr)
-        ui.console_textEdit.append(" [**] connected")
+        ui.console_textEdit.append(" [**] connected and the connection id is %s to %s" % (connid, server_addr))
         #create a socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #set the socket to non blocking
