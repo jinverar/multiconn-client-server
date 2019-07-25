@@ -81,14 +81,13 @@ def commands():
             num_conns = int(num_conns)
             start_connections(address, port, num_conns)
             try:
-                while True:
-                    events = sel.select(timeout=1)
-                    if events:
-                        for key, mask in events:
-                            service_connection(key, mask)
-                    # Check for a socket being monitored to continue.
-                    if not sel.get_map():
-                        break
+                 events = sel.select(timeout=1)
+                 if events:
+                     for key, mask in events:
+                         service_connection(key, mask)
+                 ## Check for a socket being monitored to continue.
+                 #if not sel.get_map():
+                 #    break
             except KeyboardInterrupt:
                 print("caught keyboard interrupt, exiting")
             #finally:
